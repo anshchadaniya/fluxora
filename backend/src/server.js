@@ -7,11 +7,14 @@ const connectDB = require('./config/db');
 
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB then start the server
+// Connect to MongoDB then start the server in non-serverless/local environments
 connectDB().then(() => {
-  const server = http.createServer(app);
-
-  server.listen(PORT, () => {
-    console.log(`Fluxora server running on http://localhost:${PORT}`);
-  });
+  if (!process.env.VERCEL) {
+    const server = http.createServer(app);
+    server.listen(PORT, () => {
+      console.log(`Fluxora server running on http://localhost:${PORT}`);
+    });
+  }
 });
+
+module.exports = app;
