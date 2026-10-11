@@ -1,0 +1,19 @@
+{
+  "name": "fluxora",
+  "version": "1.0.0",
+  "description": "Smart Industrial Waste Marketplace",
+  "scripts": {
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "build": "cd frontend && npm install && npm run build",
+    "vercel-build": "cd backend && npm install && cd ../frontend && npm install && npm run build",
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm run dev",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm run dev",
+    "seed": "cd backend && npm run seed",
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
