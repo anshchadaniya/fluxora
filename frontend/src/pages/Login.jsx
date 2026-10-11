@@ -97,6 +97,45 @@ const Login = () => {
           </button>
         </form>
 
+        {/* Quick Demo Credentials Autofill */}
+        <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 text-xs space-y-2">
+          <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center">
+            Quick Demo Logins (Click to Auto-fill)
+          </div>
+          <div className="grid grid-cols-3 gap-1.5">
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('admin@fluxora.com');
+                setPassword('admin123');
+              }}
+              className="py-1.5 px-2 bg-white hover:bg-teal-50 border border-slate-200 hover:border-teal-400 rounded-lg text-slate-700 font-semibold text-[11px] transition cursor-pointer text-center"
+            >
+              👑 Admin
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('seller1@test.com');
+                setPassword('password123');
+              }}
+              className="py-1.5 px-2 bg-white hover:bg-teal-50 border border-slate-200 hover:border-teal-400 rounded-lg text-slate-700 font-semibold text-[11px] transition cursor-pointer text-center"
+            >
+              🏭 Seller
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('buyer1@test.com');
+                setPassword('password123');
+              }}
+              className="py-1.5 px-2 bg-white hover:bg-teal-50 border border-slate-200 hover:border-teal-400 rounded-lg text-slate-700 font-semibold text-[11px] transition cursor-pointer text-center"
+            >
+              🚛 Buyer
+            </button>
+          </div>
+        </div>
+
         <div className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
           Don't have an industrial account?{' '}
           <Link to="/register" className="text-amber-600 font-bold hover:underline">
