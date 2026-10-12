@@ -11,6 +11,7 @@ try {
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -44,7 +45,7 @@ app.use(
   })
 );
 
-// URL normalization for serverless functions, rewrites, and direct calls
+// URL normalization for serverless functions, services, and direct calls
 app.use((req, res, next) => {
   // Strip serverless entry prefixes if passed through by Vercel
   if (req.url.startsWith('/api/index.js')) {
@@ -58,6 +59,26 @@ app.use((req, res, next) => {
     req.url = '/api' + (req.url.startsWith('/') ? req.url : '/' + req.url);
   }
   next();
+});
+
+// Auto-connect and verify MongoDB connection on incoming API requests
+app.use(async (req, res, next) => {
+  if (req.url.startsWith('/uploads')) {
+    return next();
+  }
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('[DB Request Middleware Error]:', err.message);
+    if (req.url.includes('/health')) {
+      return next();
+    }
+    return res.status(503).json({
+      success: false,
+      message: 'Database connection unavailable. Please check MongoDB Atlas connection.',
+    });
+  }
 });
 
 // Serve local uploads when Cloudinary is not configured
