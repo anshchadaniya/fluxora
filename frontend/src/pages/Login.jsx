@@ -29,7 +29,12 @@ const Login = () => {
       else if (user?.role === 'seller') navigate('/seller/dashboard');
       else navigate('/marketplace');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Login failed, please check credentials');
+      const errorMsg =
+        err.response?.data?.message ||
+        (typeof err.response?.data === 'string' && err.response.data.includes('<html')
+          ? `API route not found (${err.response?.status || 'HTML'}). The deployed link is not routing to the backend.`
+          : err.message || 'Login failed, please check credentials');
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }

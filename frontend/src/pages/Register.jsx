@@ -105,7 +105,12 @@ const Register = () => {
       if (formData.role === 'seller') navigate('/seller/dashboard');
       else navigate('/marketplace');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Registration failed');
+      const errorMsg =
+        err.response?.data?.message ||
+        (typeof err.response?.data === 'string' && err.response.data.includes('<html')
+          ? `API route not found (${err.response?.status || 'HTML'}). The deployed link is not routing to the backend.`
+          : err.message || 'Registration failed');
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
