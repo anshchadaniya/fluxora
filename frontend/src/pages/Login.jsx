@@ -22,10 +22,11 @@ const Login = () => {
     setLoading(true);
     try {
       const data = await login(email, password);
-      toast.success(`Welcome back, ${data.data.name}!`);
+      const user = data?.data;
+      toast.success(`Welcome back, ${user?.name || 'User'}!`);
 
-      if (data.data.role === 'admin') navigate('/admin/dashboard');
-      else if (data.data.role === 'seller') navigate('/seller/dashboard');
+      if (user?.role === 'admin') navigate('/admin/dashboard');
+      else if (user?.role === 'seller') navigate('/seller/dashboard');
       else navigate('/marketplace');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login failed, please check credentials');

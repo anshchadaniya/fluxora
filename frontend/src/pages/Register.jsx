@@ -100,7 +100,8 @@ const Register = () => {
 
     try {
       const data = await register(payload);
-      toast.success(`Account registered! Welcome to Fluxora, ${data.data.name}`);
+      const userName = data?.data?.name || formData.name || 'User';
+      toast.success(`Account registered! Welcome to Fluxora, ${userName}`);
       if (formData.role === 'seller') navigate('/seller/dashboard');
       else navigate('/marketplace');
     } catch (err) {
