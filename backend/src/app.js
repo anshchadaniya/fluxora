@@ -20,7 +20,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Dynamic & flexible CORS for Vercel, localhost, and custom domains
+// Dynamic & flexible CORS — accepts localhost, any *.vercel.app subdomain, and CLIENT_URL
 const allowedOrigins = [
   process.env.CLIENT_URL,
   'http://localhost:5173',
@@ -30,33 +30,30 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow non-browser requests or matching origins
+      // Allow server-to-server / non-browser requests (no Origin header)
       if (!origin) return callback(null, true);
-      if (
-        allowedOrigins.includes(origin) ||
-        origin.endsWith('.vercel.app') ||
-        process.env.NODE_ENV !== 'production'
-      ) {
-        return callback(null, true);
-      }
-      return callback(null, true); // Fallback allow to avoid unexpected deployment CORS locks
+      // Allow any Vercel deployment or preview URL
+      if (origin.endsWith('.vercel.app')) return callback(null, true);
+      // Allow explicitly configured origins
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      // Allow in development
+      if (process.env.NODE_ENV !== 'production') return callback(null, true);
+      // In production, still allow unknown origins rather than hard-block
+      // (remove this line if you want strict CORS enforcement)
+      return callback(null, true);
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 
-// URL normalization for serverless functions, services, and direct calls
+// URL normalization: strip any /api/index.js artifact from Vercel routing
 app.use((req, res, next) => {
-  // Strip serverless entry prefixes if passed through by Vercel
   if (req.url.startsWith('/api/index.js')) {
     req.url = req.url.replace('/api/index.js', '') || '/';
-  } else if (req.url.startsWith('/api/index')) {
-    req.url = req.url.replace('/api/index', '') || '/';
-  }
-
-  // Ensure path starts with /api if it's an API route without /api prefix
-  if (!req.url.startsWith('/api') && !req.url.startsWith('/uploads')) {
-    req.url = '/api' + (req.url.startsWith('/') ? req.url : '/' + req.url);
+  } else if (req.url === '/api/index') {
+    req.url = '/';
   }
   next();
 });
